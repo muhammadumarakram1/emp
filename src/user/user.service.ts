@@ -30,6 +30,11 @@ export class UserService {
         remaining_leaves: +remaining_leaves,
       },
     });
+    await this.prisma.leave_Management.create({
+      data: {
+        employeeId: user.id,
+      },
+    });
     return user;
   }
 
