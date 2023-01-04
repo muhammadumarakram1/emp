@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id               String          @id @default(uuid())
+  email            String          @unique
+  name             String
+  password         String
+  role             Role            @default(USER)
+  experience       Int?
+  education        String?
+  salary           Int
+  allocated_leave  Int
+  remaining_leaves Int
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  request_leave    Request_Leave[]
+}
+
+model Request_Leave {
+  id               String             @id @default(uuid())
+  reason           String
+  date_requested   DateTime
+  days             Int
+  author           User               @relation(fields: [authorId], references: [id])
+  authorId         String
+  leave_management Leave_Management[]
+}
+
+model Leave_Management {
+  id       Int           @id @default(autoincrement())
+  response Boolean       @default(false)
+  request  Request_Leave @relation(fields: [req_id], references: [id])
+  req_id   String
+}
